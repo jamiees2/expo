@@ -72,6 +72,7 @@ function getRootURL() {
     return _rootURL;
 }
 exports.getRootURL = getRootURL;
+<<<<<<< HEAD
 // Expo Go is weird and requires the root path to be `/--/`
 function parseExpoGoUrlFromListener(url) {
     if (!url || !isExpoGo) {
@@ -91,15 +92,38 @@ function addEventListener(listener) {
         // This extra work is only done in the Expo Go app.
         callback = ({ url }) => {
             listener(parseExpoGoUrlFromListener(url));
+=======
+function addEventListener(nativeLinking) {
+    return (listener) => {
+        let callback;
+        if (isExpoGo) {
+            // This extra work is only done in the Expo Go app.
+            callback = async ({ url }) => {
+                const parsed = Linking.parse(url);
+                // If the URL is defined (default in Expo Go dev apps) and the URL has no path:
+                // `exp://192.168.87.39:19000/` then use the default `exp://192.168.87.39:19000/--/`
+                if (parsed.path === null ||
+                    ['', '/'].includes((0, extractPathFromURL_1.adjustPathname)({ hostname: parsed.hostname, pathname: parsed.path }))) {
+                    url = getRootURL();
+                }
+                if (nativeLinking?.redirectSystemPath) {
+                    const redirectUrl = await nativeLinking.redirectSystemPath({ path: url, initial: false });
+                    if (redirectUrl) {
+                        url = redirectUrl;
+                    }
+                }
+                listener(url);
+            };
+        }
+        else {
+            callback = ({ url }) => listener(url);
+        }
+        const subscription = Linking.addEventListener('url', callback);
+        return () => {
+            // https://github.com/facebook/react-native/commit/6d1aca806cee86ad76de771ed3a1cc62982ebcd7
+            subscription?.remove?.();
+>>>>>>> a294bae3a2f (cleanup getLinkingConfig logic)
         };
-    }
-    else {
-        callback = ({ url }) => listener(url);
-    }
-    const subscription = Linking.addEventListener('url', callback);
-    return () => {
-        // https://github.com/facebook/react-native/commit/6d1aca806cee86ad76de771ed3a1cc62982ebcd7
-        subscription?.remove?.();
     };
 }
 exports.addEventListener = addEventListener;

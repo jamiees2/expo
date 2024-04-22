@@ -23,7 +23,7 @@ import { UrlObject, getRouteInfoFromState } from '../LocationProvider';
 import { RouteNode } from '../Route';
 import { deepEqual, getPathDataFromState } from '../fork/getPathFromState';
 import { ResultState } from '../fork/getStateFromPath';
-import { ExpoLinkingOptions, getLinkingConfig } from '../getLinkingConfig';
+import { ExpoLinkingOptions, LinkingConfigOptions, getLinkingConfig } from '../getLinkingConfig';
 import { getRoutes } from '../getRoutes';
 import { RequireContext } from '../types';
 import { getQualifiedRouteComponent } from '../useScreens';
@@ -66,7 +66,7 @@ export class RouterStore {
   initialize(
     context: RequireContext,
     navigationRef: NavigationContainerRefWithCurrent<ReactNavigation.RootParamList>,
-    linkingConfigOverrides: Partial<ExpoLinkingOptions> = {}
+    linkingConfigOptions: LinkingConfigOptions = {}
   ) {
     // Clean up any previous state
     this.initialState = undefined;
@@ -92,7 +92,7 @@ export class RouterStore {
 
     if (this.routeNode) {
       // We have routes, so get the linking config and the root component
-      this.linking = getLinkingConfig(this.routeNode, linkingConfigOverrides);
+      this.linking = getLinkingConfig(this.routeNode, context, linkingConfigOptions);
       this.rootComponent = getQualifiedRouteComponent(this.routeNode);
 
       // By default React Navigation is async and does not render anything in the first pass as it waits for `getInitialURL`
@@ -254,12 +254,9 @@ export function useStoreRouteInfo() {
   );
 }
 
-export function useInitializeExpoRouter(
-  context: RequireContext,
-  linking: Partial<ExpoLinkingOptions> = {}
-) {
+export function useInitializeExpoRouter(context: RequireContext, options: LinkingConfigOptions) {
   const navigationRef = useNavigationContainerRef();
-  useMemo(() => store.initialize(context, navigationRef, linking), [context, linking]);
+  useMemo(() => store.initialize(context, navigationRef, options), context.keys());
   useExpoRouter();
   return store;
 }
