@@ -6,7 +6,7 @@
 
 ### 🎉 New features
 
-- [iOS] Add support for customizing the now playing notification. ([#28386](https://github.com/expo/expo/pull/28386) by [@behenate](https://github.com/behenate))
+- Add support for customizing the now playing notification. ([#28386](https://github.com/expo/expo/pull/28386) and [#28390](https://github.com/expo/expo/pull/28390) by [@behenate](https://github.com/behenate))
 - Create a docs page. ([#27854](https://github.com/expo/expo/pull/27854) by [@behenate](https://github.com/behenate))
 - Add support for events on Android and iOS. ([#27632](https://github.com/expo/expo/pull/27632) by [@behenate](https://github.com/behenate))
 - Add support for `loop`, `playbackRate`, `preservesPitch` and `currentTime` properties. ([#27367](https://github.com/expo/expo/pull/27367) by [@behenate](https://github.com/behenate))
